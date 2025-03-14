@@ -1,7 +1,7 @@
-package com.silvestre_lanchonete.api.domain.orderProduct;
+package com.silvestre_lanchonete.api.model.orderProduct;
 
-import com.silvestre_lanchonete.api.domain.order.Order;
-import com.silvestre_lanchonete.api.domain.product.Product;
+import com.silvestre_lanchonete.api.model.order.Order;
+import com.silvestre_lanchonete.api.model.product.Product;
 import jakarta.persistence.*;
 import lombok.Data;
 

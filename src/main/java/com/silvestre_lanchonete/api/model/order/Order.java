@@ -1,7 +1,7 @@
-package com.silvestre_lanchonete.api.domain.order;
+package com.silvestre_lanchonete.api.model.order;
 
-import com.silvestre_lanchonete.api.domain.orderProduct.OrderProduct;
-import com.silvestre_lanchonete.api.domain.user.User;
+import com.silvestre_lanchonete.api.model.orderProduct.OrderProduct;
+import com.silvestre_lanchonete.api.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "Order")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -25,18 +25,12 @@ public class Order {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    private PaymentMethod paymentMethod;
-
     @JoinColumn(name = "user_id")
     @ManyToOne
     private User user;
 
     public enum OrderStatus {
         PENDENTE, EM_ANDAMENTO, CONCLUIDO, CANCELADO
-    }
-
-    public enum PaymentMethod {
-        CARTAO, PIX, DINHEIRO, WHATSAPP
     }
 
     @OneToMany(mappedBy = "order")
