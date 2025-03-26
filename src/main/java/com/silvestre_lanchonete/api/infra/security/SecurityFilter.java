@@ -1,6 +1,6 @@
 package com.silvestre_lanchonete.api.infra.security;
 
-import com.silvestre_lanchonete.api.model.user.User;
+import com.silvestre_lanchonete.api.domain.user.User;
 import com.silvestre_lanchonete.api.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

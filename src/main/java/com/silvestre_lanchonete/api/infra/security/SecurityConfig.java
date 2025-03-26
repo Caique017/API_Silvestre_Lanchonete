@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -42,11 +40,14 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/admin/products").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/products").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/products").hasAuthority("Administrador")
+                        .requestMatchers("/products/**").hasAuthority("Administrador")
                         .requestMatchers(HttpMethod.POST, "/orders").hasAnyAuthority("Administrador", "Usuario")
                         .requestMatchers(HttpMethod.GET, "/orders").hasAnyAuthority("Administrador", "Usuario")
                         .requestMatchers(HttpMethod.PUT, "/orders/**").hasAuthority("Administrador")
-                        .requestMatchers("/admin/**").hasAnyAuthority("Administrador")
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
@@ -57,10 +58,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
     }
 }
