@@ -1,4 +1,4 @@
-package com.silvestre_lanchonete.api.model.product;
+package com.silvestre_lanchonete.api.domain.product;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

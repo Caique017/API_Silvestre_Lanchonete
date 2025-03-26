@@ -2,7 +2,7 @@ package com.silvestre_lanchonete.api.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.silvestre_lanchonete.api.DTO.ProductRequestDTO;
-import com.silvestre_lanchonete.api.model.product.Product;
+import com.silvestre_lanchonete.api.domain.product.Product;
 import com.silvestre_lanchonete.api.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
