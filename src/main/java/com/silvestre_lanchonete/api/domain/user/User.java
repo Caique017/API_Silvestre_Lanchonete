@@ -1,4 +1,4 @@
-package com.silvestre_lanchonete.api.model.user;
+package com.silvestre_lanchonete.api.domain.user;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -38,7 +38,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "";
+        return email;
     }
 
     public enum Role {

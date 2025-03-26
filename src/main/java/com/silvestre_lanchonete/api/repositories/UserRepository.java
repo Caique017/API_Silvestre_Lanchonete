@@ -1,6 +1,6 @@
 package com.silvestre_lanchonete.api.repositories;
 
-import com.silvestre_lanchonete.api.model.user.User;
+import com.silvestre_lanchonete.api.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

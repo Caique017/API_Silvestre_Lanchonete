@@ -4,8 +4,10 @@ import com.silvestre_lanchonete.api.DTO.LoginRequestDTO;
 import com.silvestre_lanchonete.api.DTO.RegisterRequestDTO;
 import com.silvestre_lanchonete.api.DTO.ResponseDTO;
 import com.silvestre_lanchonete.api.infra.security.TokenService;
-import com.silvestre_lanchonete.api.model.user.User;
+import com.silvestre_lanchonete.api.domain.user.User;
 import com.silvestre_lanchonete.api.repositories.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,14 +26,20 @@ public class AuthService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public ResponseDTO login(LoginRequestDTO body) {
-
-        User user = this.userRepository.findByEmail(body.email()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public ResponseDTO login(HttpServletRequest request, LoginRequestDTO body) {
+        User user = this.userRepository.findByEmail(body.email())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         if (passwordEncoder.matches(body.password(), user.getPassword())) {
             String token = this.tokenService.generateToken(user);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute("userEmail", user.getEmail());
+
+            System.out.println("Sessão criada com sucesso para: " + user.getEmail());
             return new ResponseDTO(user.getName(), token);
         }
+
         throw new RuntimeException("Credenciais inválidas");
     }
 
