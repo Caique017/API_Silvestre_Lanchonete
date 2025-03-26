@@ -2,12 +2,13 @@ package com.silvestre_lanchonete.api.controller;
 
 import com.silvestre_lanchonete.api.DTO.OrderRequestDTO;
 import com.silvestre_lanchonete.api.DTO.OrderResponseDTO;
-import com.silvestre_lanchonete.api.model.order.Order;
+import com.silvestre_lanchonete.api.domain.order.Order;
 import com.silvestre_lanchonete.api.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,6 @@ public class OrderContoller {
     private OrderService orderService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('Administrador', 'Usuario')")
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO orderRequest) {
         Order newOrder = orderService.createOrder(orderRequest);
 
@@ -41,7 +41,6 @@ public class OrderContoller {
     }
 
     @PutMapping("/status/{id}")
-    @PreAuthorize("hasAuthority('Administrador')")
     public ResponseEntity<OrderResponseDTO> updateOrderStatus(
             @PathVariable UUID id,
             @RequestParam Order.OrderStatus newStatus) {
@@ -67,8 +66,22 @@ public class OrderContoller {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('Administrador', 'Usuario')")
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
+    public ResponseEntity<List<OrderResponseDTO>> getAllOrders(@AuthenticationPrincipal UserDetails userDetails) {
+        String emailClient = userDetails.getUsername();
+        List<Order> orders = orderService.getAllOrders(emailClient);
+
+        List<OrderResponseDTO> responseDTOList = orders.stream().map(order -> new OrderResponseDTO(
+                order.getId(),
+                order.getStatus().name(),
+                order.getTotal(),
+                order.getOrderProducts().stream().map(op -> new OrderResponseDTO.OrderProductResponse(
+                        op.getProduct().getId(),
+                        op.getProduct().getName(),
+                        op.getAmount(),
+                        op.getPrice()
+                )).toList()
+        )).toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTOList);
     }
 }

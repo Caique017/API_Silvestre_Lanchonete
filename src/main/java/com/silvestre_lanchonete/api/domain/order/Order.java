@@ -1,12 +1,13 @@
-package com.silvestre_lanchonete.api.model.order;
+package com.silvestre_lanchonete.api.domain.order;
 
-import com.silvestre_lanchonete.api.model.orderProduct.OrderProduct;
-import com.silvestre_lanchonete.api.model.user.User;
+import com.silvestre_lanchonete.api.domain.orderProduct.OrderProduct;
+import com.silvestre_lanchonete.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class Order {
     @GeneratedValue
     private UUID id;
 
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private Double total;
 
@@ -34,5 +36,9 @@ public class Order {
     }
 
     @OneToMany(mappedBy = "order")
-    private List<OrderProduct> OrderProducts;
+    private List<OrderProduct> orderProducts;
+
+    public List<OrderProduct> getOrderProducts() {
+        return orderProducts != null ? orderProducts : new ArrayList<>();
+    }
 }
