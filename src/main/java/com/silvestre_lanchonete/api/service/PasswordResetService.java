@@ -56,13 +56,18 @@ public class PasswordResetService {
         emailService.sendEmail(user.getEmail(), "🔐 Redefinição de Senha", message);
     }
 
-    public void resetPassword(PasswordResetTokenDTO dto) {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(dto.token())
-                .orElseThrow(() -> new RuntimeException("Código inválido ou expirado"));
+    public PasswordResetToken validateCode(String token) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Código inválido ou inexistente"));
 
-        if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Código expirado");
+        if  (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+                throw new RuntimeException("Código expirado");
         }
+        return resetToken;
+    }
+
+    public void resetPassword(PasswordResetTokenDTO dto) {
+        PasswordResetToken resetToken = validateCode(dto.token());
 
         User user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(dto.newPassword()));

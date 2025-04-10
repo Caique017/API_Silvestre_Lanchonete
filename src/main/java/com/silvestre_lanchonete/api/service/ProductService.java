@@ -1,10 +1,10 @@
 package com.silvestre_lanchonete.api.service;
 
-import com.amazonaws.services.s3.AmazonS3;
+import com.google.cloud.storage.*;
 import com.silvestre_lanchonete.api.DTO.ProductRequestDTO;
 import com.silvestre_lanchonete.api.domain.product.Product;
 import com.silvestre_lanchonete.api.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,34 +19,40 @@ import java.util.UUID;
 @Service
 public class ProductService {
 
-    @Value("${aws-bucket-name}")
+    @Value("${gcp.bucket.name}")
     private String bucketName;
 
-    @Autowired
-    private ProductRepository productRepository;
+    @Value("${gcp.credentials.path}")
+    private String credentialsPath;
 
-    @Autowired
-    private AmazonS3 S3Client;
+    private final ProductRepository productRepository;
 
-    public Product createProduct (ProductRequestDTO data) {
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
-       String imageUrl = null;
+    @PostConstruct
+    private void init() {
+        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", credentialsPath);
+    }
 
-       if (data.image() != null) {
+    public Product createProduct(ProductRequestDTO data) {
+
+        String imageUrl = null;
+
+        if (data.image() != null) {
             imageUrl = this.uploadImg(data.image());
-       }
+        }
 
-       Product newProduct = new Product();
-       newProduct.setName(data.name());
-       newProduct.setDescription(data.description());
-       newProduct.setPrice(data.price());
-       newProduct.setCategory(data.category());
-       newProduct.setAvailable(data.available());
-       newProduct.setImageUrl(imageUrl);
+        Product newProduct = new Product();
+        newProduct.setName(data.name());
+        newProduct.setDescription(data.description());
+        newProduct.setPrice(data.price());
+        newProduct.setCategory(data.category());
+        newProduct.setAvailable(data.available());
+        newProduct.setImageUrl(imageUrl);
 
-       productRepository.save(newProduct);
-
-       return newProduct;
+        return productRepository.save(newProduct);
     }
 
     public Product updateProduct(UUID id, ProductRequestDTO data) {
@@ -79,23 +85,21 @@ public class ProductService {
     }
 
     private String uploadImg(MultipartFile multipartFile) {
-        String fileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
         try {
-            File file = this.convertMultipartToFile(multipartFile);
-            S3Client.putObject(bucketName, fileName, file);
-            file.delete();
-            return S3Client.getUrl(bucketName, fileName).toString();
+            Storage storage = StorageOptions.getDefaultInstance().getService();
+            String fileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
+
+            BlobId blobId = BlobId.of(bucketName, fileName);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                    .setContentType(multipartFile.getContentType())
+                    .build();
+
+            storage.create(blobInfo, multipartFile.getBytes());
+            return String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
+
         } catch (Exception e) {
-            System.out.println("Erro ao subir o arquivo");
+            System.out.println("Erro ao subir o arquivo no Google Cloud Storage: " + e.getMessage());
             return null;
         }
-    }
-
-    private File convertMultipartToFile(MultipartFile multipartFile) throws IOException {
-        File convFile = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(multipartFile.getBytes());
-        fos.close();
-        return convFile;
     }
 }
