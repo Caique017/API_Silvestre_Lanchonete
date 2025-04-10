@@ -21,10 +21,10 @@ public class SecurityConfig {
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
-    SecurityFilter securityFilter;
+    private SecurityFilter securityFilter;
 
     @Autowired
-    CorsConfig corsConfig;
+    private CorsConfig corsConfig;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,10 +38,16 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/api-docs/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/auth/login",
+                                        "/auth/register",
+                                        "/auth/forgot-password",
+                                        "/auth/reset-password",
+                                        "/auth/validate-code",
+                                        "/auth/update-token"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/login/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/register/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products").permitAll()
                         .requestMatchers(HttpMethod.POST, "/products").hasAuthority("Administrador")
                         .requestMatchers("/products/**").hasAuthority("Administrador")

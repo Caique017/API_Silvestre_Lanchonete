@@ -23,7 +23,7 @@ public class TokenService {
                     .withIssuer("login-auth-api")
                     .withClaim("role", user.getRole().name())
                     .withSubject(user.getEmail())
-                    .withExpiresAt(this.generateExpirationDate())
+                    .withExpiresAt(this.generateExpirationDate(1))
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception){
@@ -31,20 +31,35 @@ public class TokenService {
         }
     }
 
-    public String validateToken(String token){
+    public String generateRefreshToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm)
+            String token = JWT.create()
                     .withIssuer("login-auth-api")
-                    .build()
-                    .verify(token)
-                    .getSubject();
-        } catch (JWTVerificationException exception) {
-            return null;
+                    .withClaim("role", user.getRole().name())
+                    .withSubject(user.getId().toString())
+                    .withExpiresAt(this.generateExpirationDate(3))
+                    .sign(algorithm);
+            return token;
+        } catch (JWTCreationException exception){
+            throw new RuntimeException("Error while authenticating");
         }
     }
 
-    private Instant generateExpirationDate(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        public String validateToken (String token){
+            try {
+                Algorithm algorithm = Algorithm.HMAC256(secret);
+                return JWT.require(algorithm)
+                        .withIssuer("login-auth-api")
+                        .build()
+                        .verify(token)
+                        .getSubject();
+            } catch (JWTVerificationException exception) {
+                return null;
+            }
+        }
+
+        private Instant generateExpirationDate (Integer hours) {
+            return LocalDateTime.now().plusHours(hours).toInstant(ZoneOffset.of("-03:00"));
+        }
     }
-}
