@@ -5,6 +5,7 @@ import com.silvestre_lanchonete.api.DTO.ProductRequestDTO;
 import com.silvestre_lanchonete.api.domain.product.Product;
 import com.silvestre_lanchonete.api.repositories.ProductRepository;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,21 +20,30 @@ import java.util.UUID;
 @Service
 public class ProductService {
 
-    @Value("${gcp.bucket.name}")
+    @Value("${gcp-bucket-name}")
     private String bucketName;
 
-    @Value("${gcp.credentials.path}")
-    private String credentialsPath;
-
+    @Autowired
     private final ProductRepository productRepository;
 
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
+        System.out.println("ProductService instanciado");
     }
 
     @PostConstruct
     private void init() {
+        String credentialsPath = System.getenv("PATH_CREDENTIALS");
+        System.out.println("Valor de PATH-CREDENTIALS: " + credentialsPath);
+
+        if (credentialsPath == null) {
+            throw new RuntimeException("A variável de ambiente PATH-CREDENTIALS não está definida.");
+        }
+
         System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", credentialsPath);
+        System.out.println("Caminho das credenciais: " + credentialsPath);
+        File file = new File(credentialsPath);
+        System.out.println("Arquivo de credenciais existe: " + file.exists());
     }
 
     public Product createProduct(ProductRequestDTO data) {

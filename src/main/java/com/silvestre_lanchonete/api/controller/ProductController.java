@@ -16,8 +16,11 @@ import java.util.UUID;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Product> createProduct(@RequestParam("name") String name,

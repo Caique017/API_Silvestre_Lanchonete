@@ -17,14 +17,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
-    @Autowired
-    private SecurityFilter securityFilter;
+    private final SecurityFilter securityFilter;
 
-    @Autowired
-    private CorsConfig corsConfig;
+    private final CorsConfig corsConfig;
+
+    public SecurityConfig(CustomUserDetailsService userDetailsService, SecurityFilter securityFilter, CorsConfig corsConfig) {
+        this.userDetailsService = userDetailsService;
+        this.securityFilter = securityFilter;
+        this.corsConfig = corsConfig;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

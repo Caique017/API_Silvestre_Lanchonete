@@ -13,10 +13,10 @@ import java.util.UUID;
 @Service
 public class LoginGoogleService {
 
-    @Value("${google.oauth.client.id}")
+    @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
 
-    @Value("${google.oauth.client.secret}")
+    @Value("${GOOGLE_CLIENT_SECRET}")
     private String clientSecret;
 
     private final String redirectUri = "http://localhost:8080/auth/login/google/authorized";
