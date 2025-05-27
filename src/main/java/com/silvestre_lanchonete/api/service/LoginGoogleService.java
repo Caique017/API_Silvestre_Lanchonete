@@ -19,8 +19,8 @@ public class LoginGoogleService {
     @Value("${GOOGLE_CLIENT_SECRET}")
     private String clientSecret;
 
-    private final String redirectUri = "http://localhost:8080/auth/login/google/authorized";
-    private final String redirectUriRegister = "http://localhost:8080/auth/register/google/authorized";
+    private final String redirectUri = "https://api-docker-141213034707.us-central1.run.app/auth/login/google/authorized"; //https://api-docker-141213034707.us-central1.run.app url base produção
+    private final String redirectUriRegister = "https://api-docker-141213034707.us-central1.run.app/auth/register/google/authorized";
 
     private final RestClient restClient;
 
