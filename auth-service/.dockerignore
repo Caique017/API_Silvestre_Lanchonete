@@ -1,0 +1,19 @@
+target/
+
+.idea/
+*.iml
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+.env
+*.env
+
+# Logs
+*.log
+logs/
+
+# macOS
+.DS_Store

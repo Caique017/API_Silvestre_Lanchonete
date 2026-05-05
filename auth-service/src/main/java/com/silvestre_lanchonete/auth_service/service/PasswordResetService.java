@@ -3,6 +3,8 @@ package com.silvestre_lanchonete.auth_service.service;
 import com.silvestre_lanchonete.auth_service.dto.PasswordResetTokenDTO;
 import com.silvestre_lanchonete.auth_service.domain.PasswordResetToken;
 import com.silvestre_lanchonete.auth_service.domain.User;
+import com.silvestre_lanchonete.auth_service.infra.exceptions.InvalidTokenException;
+import com.silvestre_lanchonete.auth_service.infra.exceptions.UserNotFoundException;
 import com.silvestre_lanchonete.auth_service.repositories.PasswordResetTokenRepository;
 import com.silvestre_lanchonete.auth_service.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ public class PasswordResetService {
 
     public void requestPasswordReset(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuário com e-mail " + email + " não encontrado."));
 
         String token = String.format("%06d", new Random().nextInt(999999));
 
@@ -58,10 +60,10 @@ public class PasswordResetService {
 
     public PasswordResetToken validateCode(String token) {
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Código inválido ou inexistente"));
+                .orElseThrow(() -> new InvalidTokenException("Código de recuperação inválido."));
 
         if  (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-                throw new RuntimeException("Código expirado");
+                throw new InvalidTokenException("Código de recuperação expirado.");
         }
         return resetToken;
     }

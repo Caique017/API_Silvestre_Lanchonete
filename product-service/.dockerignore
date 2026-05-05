@@ -1,0 +1,21 @@
+target/
+
+# IDE e configurações locais
+.idea/
+*.iml
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# Arquivos de ambiente local — nunca entrar na imagem
+.env
+*.env
+
+# Logs
+*.log
+logs/
+
+# macOS
+.DS_Store

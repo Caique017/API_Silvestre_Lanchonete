@@ -1,11 +1,9 @@
 package com.silvestre_lanchonete.product_service.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -19,7 +17,9 @@ public class Product {
 
     private String name;
     private String description;
-    private Double price;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal price;
     private String category;
     private String imageUrl;
     private Boolean available = true;

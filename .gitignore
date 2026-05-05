@@ -1,4 +1,37 @@
-.idea/
-*.iml
-out/
-gen/
+# ===== Maven =====
+**/target/
+**/*.class
+**/*.jar
+!**/src/main/**/*.jar
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/release.properties
+
+# ===== IDE =====
+**/.idea/
+**/*.iml
+**/.vscode/
+**/*.suo
+**/*.user
+**/.settings/
+**/.classpath
+**/.project
+**/.factorypath
+
+# ===== Ambiente e segredos =====
+**/.env
+**/*.env
+**/application-local.properties
+**/application-test.properties
+
+# ===== Logs =====
+**/*.log
+**/logs/
+
+# ===== OS =====
+**/.DS_Store
+**/Thumbs.db
+
+# ===== Docker =====
+**/docker-compose.override.yml

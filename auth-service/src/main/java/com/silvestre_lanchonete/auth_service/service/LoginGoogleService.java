@@ -19,8 +19,11 @@ public class LoginGoogleService {
     @Value("${GOOGLE_CLIENT_SECRET}")
     private String clientSecret;
 
-    private final String redirectUri = "http://localhost:8080/auth/login/google/authorized"; // colocar em var. ambiente
-    private final String redirectUriRegister = "http://localhost:8080/auth/register/google/authorized"; // colocar em var. ambiente
+    @Value("${url-login-google}")
+    private String redirectUri;
+
+    @Value("${url-register-google}")
+    private String redirectUriRegister;
 
     private final RestClient restClient;
 
@@ -29,19 +32,13 @@ public class LoginGoogleService {
     }
 
     public String generateUrl() {
-        return "https://accounts.google.com/o/oauth2/v2/auth" +
-                "?client_id=" + clientId +
-                "&redirect_uri=" + redirectUri +
-                "&scope=https://www.googleapis.com/auth/userinfo.email" +
-                "&response_type=code";
+        return String.format("https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&scope=https://www.googleapis.com/auth/userinfo.email&response_type=code",
+                clientId, redirectUri);
     }
 
     public String generateUrlRegister() {
-        return "https://accounts.google.com/o/oauth2/v2/auth" +
-                "?client_id=" + clientId +
-                "&redirect_uri=" + redirectUriRegister +
-                "&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile" +
-                "&response_type=code";
+        return String.format("https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&scope=https://www.googleapis.com/auth/userinfo.email%%20https://www.googleapis.com/auth/userinfo.profile&response_type=code",
+                clientId, redirectUriRegister);
     }
 
     private String getToken(String code, String uri) {

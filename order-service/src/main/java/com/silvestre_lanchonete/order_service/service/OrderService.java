@@ -2,9 +2,12 @@ package com.silvestre_lanchonete.order_service.service;
 
 import com.silvestre_lanchonete.order_service.domain.Order;
 import com.silvestre_lanchonete.order_service.domain.OrderProduct;
+import com.silvestre_lanchonete.order_service.dto.OrderItemRequestDTO;
 import com.silvestre_lanchonete.order_service.dto.OrderRequestDTO;
 import com.silvestre_lanchonete.order_service.dto.ProductResponseDTO;
 import com.silvestre_lanchonete.order_service.repositories.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,22 +22,24 @@ public class OrderService {
     private final ProductClientService productClient;
     private final OrderEventPublisher eventPublisher;
 
-    public OrderService(OrderRepository orderRepository, ProductClientService productClient, OrderEventPublisher eventPublisher) {
+    public OrderService(OrderRepository orderRepository,
+                        ProductClientService productClient,
+                        OrderEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
         this.productClient = productClient;
         this.eventPublisher = eventPublisher;
     }
 
     @Transactional
-    public Order createOrder(OrderRequestDTO requestDTO, String userEmail, String token) {
+    public Order createOrder(OrderRequestDTO requestDTO, String userEmail) {
         Order order = new Order();
         order.setUserEmail(userEmail);
         order.setStatus(Order.OrderStatus.PENDENTE);
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        for (var itemRequest : requestDTO.items()) {
-            ProductResponseDTO productInfo = productClient.getProductById(itemRequest.productId(), token);
+        for (OrderItemRequestDTO itemRequest : requestDTO.items()) {
+            ProductResponseDTO productInfo = productClient.getProductById(itemRequest.productId());
 
             OrderProduct orderProduct = new OrderProduct();
             orderProduct.setProductId(productInfo.id());
@@ -43,9 +48,9 @@ public class OrderService {
             orderProduct.setOrder(order);
 
             order.getOrderProducts().add(orderProduct);
-
-            BigDecimal subtotal = productInfo.price().multiply(new BigDecimal(itemRequest.amount()));
-            totalAmount = totalAmount.add(subtotal);
+            totalAmount = totalAmount.add(
+                    productInfo.price().multiply(new BigDecimal(itemRequest.amount()))
+            );
         }
 
         order.setTotal(totalAmount);
@@ -59,14 +64,16 @@ public class OrderService {
     @Transactional
     public Order updateOrderStatus(UUID id, Order.OrderStatus newStatus) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado com id: " + id));
         order.setStatus(newStatus);
-        order = orderRepository.save(order);
+        return orderRepository.save(order);
+    }
 
-//         eventPublisher.publishOrderStatusUpdatedEvent(order);
-
-        return order;
+    public Page<Order> getAllOrders(String email, Order.OrderStatus status, Pageable pageable) {
+        if (status != null) {
+            return orderRepository.findByUserEmailAndStatus(email, status, pageable);
+        }
+        return orderRepository.findByUserEmail(email, pageable);
     }
 
     public List<Order> getAllOrders(String email) {

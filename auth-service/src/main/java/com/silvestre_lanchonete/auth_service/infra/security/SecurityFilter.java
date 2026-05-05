@@ -1,7 +1,6 @@
 package com.silvestre_lanchonete.auth_service.infra.security;
 
 import com.silvestre_lanchonete.auth_service.domain.User;
-import com.silvestre_lanchonete.auth_service.infra.security.TokenService;
 import com.silvestre_lanchonete.auth_service.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

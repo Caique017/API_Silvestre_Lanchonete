@@ -1,6 +1,5 @@
 package com.silvestre_lanchonete.auth_service.service;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.regions.Region;
@@ -29,12 +28,11 @@ public class EmailService {
                     .build();
 
             client.sendEmail(request);
-            System.out.println("✅ E-mail enviado com sucesso via AWS SES para: " + to);
 
         } catch (SesException e) {
-            System.err.println("❌ Erro da AWS ao enviar e-mail: " + e.awsErrorDetails().errorMessage());
+            System.err.println("Erro da AWS ao enviar e-mail: " + e.awsErrorDetails().errorMessage());
         } catch (Exception e) {
-            System.err.println("❌ Erro inesperado no envio de e-mail: " + e.getMessage());
+            System.err.println("Erro inesperado no envio de e-mail: " + e.getMessage());
         }
     }
 }

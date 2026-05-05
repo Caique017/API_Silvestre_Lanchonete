@@ -1,6 +1,5 @@
 package com.silvestre_lanchonete.auth_service.domain;
 
-import com.silvestre_lanchonete.auth_service.domain.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

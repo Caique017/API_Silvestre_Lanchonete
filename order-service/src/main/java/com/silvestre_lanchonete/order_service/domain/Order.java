@@ -30,9 +30,9 @@ public class Order {
     private LocalDateTime createdAt;
 
     public enum OrderStatus {
-        PENDENTE, CONFIRMADO, CANCELADO
+        PENDENTE, CONFIRMADO, CANCELADO, CONCLUIDO
     }
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderProduct> orderProducts = new ArrayList<>();
 }

@@ -1,0 +1,30 @@
+# Maven build output
+**/target/
+**/*.class
+
+# IDE
+**/.idea/
+**/*.iml
+**/.vscode/
+
+# Git
+**/.git/
+**/.gitignore
+
+# Arquivos de ambiente local
+**/.env
+**/*.env
+**/application-local.properties
+**/application-test.properties
+
+# Logs
+**/*.log
+**/logs/
+
+# macOS / Windows
+**/.DS_Store
+**/Thumbs.db
+
+# Docker
+**/docker-compose*.yml
+**/Dockerfile*
