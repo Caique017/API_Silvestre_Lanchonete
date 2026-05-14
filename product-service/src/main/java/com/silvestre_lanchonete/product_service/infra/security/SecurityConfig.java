@@ -43,7 +43,6 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
-                        // Swagger UI público
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",

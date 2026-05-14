@@ -46,8 +46,7 @@ public class OrderCreatedConsumer {
             log.info("[SQS] Produto '{}' — quantidade solicitada: {}",
                     product.getName(), item.amount());
 
-            // ---------------------------------------------------------------
-            if (Boolean.FALSE.equals(product.getAvailable())) {
+           if (Boolean.FALSE.equals(product.getAvailable())) {
                 log.warn("[SQS] Atenção: produto '{}' está marcado como indisponível " +
                         "mas foi incluído no pedido {}", product.getName(), orderId);
             }
