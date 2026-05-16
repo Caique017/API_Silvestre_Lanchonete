@@ -5,5 +5,6 @@ import java.util.UUID;
 
 public record ProductResponseDTO(UUID id,
                                  String name,
-                                 BigDecimal price) {
+                                 BigDecimal price,
+                                 Boolean available) {
 }

@@ -7,6 +7,7 @@ public record ProductResponseDTO(
         UUID id,
         String name,
         String description,
-        BigDecimal price
+        BigDecimal price,
+        Boolean available
 ) {
 }

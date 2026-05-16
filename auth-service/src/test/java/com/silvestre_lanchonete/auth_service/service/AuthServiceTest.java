@@ -118,6 +118,7 @@ class AuthServiceTest {
         void deveRegistrarNovoUsuario() {
             var request = new RegisterRequestDTO("Maria Souza", "maria@email.com", "senha456");
             when(userRepository.findByEmail("maria@email.com")).thenReturn(Optional.empty());
+            when(userRepository.count()).thenReturn(1L);
             when(passwordEncoder.encode("senha456")).thenReturn("$2a$10$encodedPassword");
             when(tokenService.generateToken(any(User.class))).thenReturn("access-token-novo");
             when(tokenService.generateRefreshToken(any(User.class))).thenReturn("refresh-token-novo");
@@ -151,17 +152,18 @@ class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("deve sempre criar usuário com role Usuario, nunca Administrador")
-        void deveAtribuirRoleUsuarioPorPadrao() {
+        @DisplayName("deve criar o primeiro usuário do sistema como Administrador")
+        void deveCriarPrimeiroUsuarioComoAdmin() {
             var request = new RegisterRequestDTO("Carlos Admin", "carlos@email.com", "senha789");
             when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+            when(userRepository.count()).thenReturn(0L);
             when(passwordEncoder.encode(anyString())).thenReturn("hash");
             when(tokenService.generateToken(any())).thenReturn("t");
             when(tokenService.generateRefreshToken(any())).thenReturn("rt");
             authService.register(request);
             ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
             verify(userRepository).save(captor.capture());
-            assertThat(captor.getValue().getRole()).isNotEqualTo(Role.Administrador);
+            assertThat(captor.getValue().getRole()).isEqualTo(Role.Administrador);
         }
     }
 

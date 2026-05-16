@@ -41,6 +41,12 @@ public class OrderService {
         for (OrderItemRequestDTO itemRequest : requestDTO.items()) {
             ProductResponseDTO productInfo = productClient.getProductById(itemRequest.productId());
 
+            if (Boolean.FALSE.equals(productInfo.available())) {
+                throw new IllegalArgumentException(
+                        "O produto de ID " + productInfo.id() + " está esgotado no momento."
+                );
+            }
+
             OrderProduct orderProduct = new OrderProduct();
             orderProduct.setProductId(productInfo.id());
             orderProduct.setAmount(itemRequest.amount());

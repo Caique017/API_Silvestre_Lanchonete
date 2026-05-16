@@ -55,7 +55,8 @@ public class OrderServiceTest {
         productInfo = new ProductResponseDTO(
                 productId,
                 "X-Burguer",
-                new BigDecimal("25.90")
+                new BigDecimal("25.90"),
+                true
         );
     }
 
@@ -86,7 +87,7 @@ public class OrderServiceTest {
         @DisplayName("deve calcular total corretamente para múltiplos itens diferentes")
         void deveCriarPedidoComMultiplosItens() {
             UUID productId2 = UUID.randomUUID();
-            var product2 = new ProductResponseDTO(productId2, "Coca-Cola", new BigDecimal("8.00"));
+            var product2 = new ProductResponseDTO(productId2, "Coca-Cola", new BigDecimal("8.00"), true);
 
             var items = List.of(
                     new OrderItemRequestDTO(productId, 1),

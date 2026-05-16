@@ -114,7 +114,7 @@ public class ProductService {
         }
 
         return productRepository.findAll(spec, pageable)
-                .map(p -> new ProductResponseDTO(p.getId(), p.getName(), p.getDescription(), p.getPrice()));
+                .map(p -> new ProductResponseDTO(p.getId(), p.getName(), p.getDescription(), p.getPrice(), p.getAvailable()));
     }
 
     public List<Product> listProducts() {

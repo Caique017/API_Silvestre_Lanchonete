@@ -100,7 +100,8 @@ public class ProductController {
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
-                product.getPrice()
+                product.getPrice(),
+                product.getAvailable()
         ));
     }
 
